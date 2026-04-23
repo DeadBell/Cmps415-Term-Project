@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Static Files
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Sessions (required for login)
 app.use(
