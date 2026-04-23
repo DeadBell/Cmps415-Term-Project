@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Topics</title>
+</head>
+<body>
+
+  <h1>All Topics</h1>
+
+  <% topics.forEach(topic => { %>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <h3><%= topic.title %></h3>
+
+      <form action="/topics/<%= topic._id %>/subscribe" method="POST">
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  <% }) %>
+
+  <h2>Create New Topic</h2>
+  <form action="/topics" method="POST">
+    <input type="text" name="title" placeholder="Topic title" required>
+    <button type="submit">Create Topic</button>
+  </form>
+
+  <p><a href="/dashboard">Back to Dashboard</a></p>
+
+</body>
+</html>

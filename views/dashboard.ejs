@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+
+  <h1>Welcome, <%= user.username %></h1>
+
+  <h2>Your Subscribed Topics</h2>
+
+  <% if (topics.length === 0) { %>
+    <p>You are not subscribed to any topics yet.</p>
+  <% } %>
+
+  <% topics.forEach(topic => { %>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <h3><%= topic.title %></h3>
+
+      <h4>Recent Messages:</h4>
+      <% if (topicMessages[topic._id].length === 0) { %>
+        <p>No messages yet.</p>
+      <% } else { %>
+        <% topicMessages[topic._id].forEach(msg => { %>
+          <p><strong><%= msg.author.username %>:</strong> <%= msg.content %></p>
+        <% }) %>
+      <% } %>
+
+      <form action="/topics/<%= topic._id %>/unsubscribe" method="POST">
+        <button type="submit">Unsubscribe</button>
+      </form>
+
+      <form action="/topics/<%= topic._id %>/messages" method="POST">
+        <input type="text" name="content" placeholder="Write a message..." required>
+        <button type="submit">Post</button>
+      </form>
+    </div>
+  <% }) %>
+
+  <a href="/topics">View all topics</a>
+
+</body>
+</html>
