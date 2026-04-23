@@ -63,6 +63,14 @@ input {
   border: 1px solid var(--border);
 }
 
+.nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
 a {
   color: #4f46e5;
   text-decoration: none;
