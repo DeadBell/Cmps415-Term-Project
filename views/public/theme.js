@@ -1,12 +1,11 @@
 window.toggleDarkMode = function () {
   document.body.classList.toggle("dark");
 
-  if (document.body.classList.contains("dark")) {
-    localStorage.setItem("theme", "dark");
-  } else {
-    localStorage.setItem("theme", "light");
-  }
-}
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+};
 
 window.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("theme") === "dark") {
