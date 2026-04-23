@@ -10,6 +10,9 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Static Files
+app.use(express.static("public"));
+
 // Sessions (required for login)
 app.use(
   session({
