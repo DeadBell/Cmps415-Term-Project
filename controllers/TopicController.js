@@ -2,7 +2,7 @@
 const User = require("../models/User");
 const Topic = require("../models/Topic");
 const Message = require("../models/Message");
-const topicNotifier = require("../observers");
+const topicNotifier = require("../observers/ITopicObserver");
 
 module.exports = {
   async dashboard(req, res) {

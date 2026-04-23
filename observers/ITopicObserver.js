@@ -1,7 +1,16 @@
-// observers/ITopicObserver.js
-class ITopicObserver {
-  update(eventType, payload) {
-    throw new Error("Not implemented");
+// observers/TopicStatsObserver.js
+const ITopicObserver = require("./ITopicObserver");
+const Topic = require("../models/Topic");
+
+class TopicStatsObserver extends ITopicObserver {
+  async update(eventType, payload) {
+    if (eventType === "TOPIC_VIEWED") {
+      await Topic.findByIdAndUpdate(payload.topicId, {
+        $inc: { accessCount: 1 }
+      });
+    }
   }
 }
-module.exports = ITopicObserver;
+
+module.exports = new TopicStatsObserver();
+
