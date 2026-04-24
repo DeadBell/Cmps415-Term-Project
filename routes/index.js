@@ -5,6 +5,11 @@ const AuthController = require('../controllers/AuthController');
 const TopicController = require('../controllers/TopicController');
 const MessageController = require('../controllers/MessageController');
 
+//login
+router.get('/', (req,res) => {
+  res.redirect('/login');
+});
+
 // auth
 router.get('/login', AuthController.showLogin);
 router.post('/login', AuthController.login);

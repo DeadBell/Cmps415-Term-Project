@@ -2,8 +2,23 @@
 <html>
 <head>
   <title>Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
+<div class="nav">
+  <div class="nav-title">Message System</div>
+  <div>
+    <button onclick="toggleDarkMode()">🌙</button> |
+    <a href="/dashboard">Dashboard</a> |
+    <a href="/topics">Topics</a> |
+    <a href="/stats/topics">Stats</a> |
+    <a href="/login">Logout</a>
+  </div>
+</div>
+
+<div class="container">
 
   <h1>Welcome, <%= user.username %></h1>
 
@@ -14,7 +29,7 @@
   <% } %>
 
   <% topics.forEach(topic => { %>
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+    <div class="card">
       <h3><%= topic.title %></h3>
 
       <h4>Recent Messages:</h4>
@@ -22,7 +37,10 @@
         <p>No messages yet.</p>
       <% } else { %>
         <% topicMessages[topic._id].forEach(msg => { %>
-          <p><strong><%= msg.author.username %>:</strong> <%= msg.content %></p>
+          <div class="card">
+            <strong><%= msg.author.username %>:</strong> 
+            <p><%= msg.content %></p>
+          </div>
         <% }) %>
       <% } %>
 
@@ -36,8 +54,11 @@
       </form>
     </div>
   <% }) %>
-
+  
   <a href="/topics">View all topics</a>
 
+</div>
+
+<script src="/theme.js"></script>
 </body>
 </html>
