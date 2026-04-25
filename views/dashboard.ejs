@@ -29,32 +29,48 @@
   <% } %>
 
   <% topics.forEach(topic => { %>
-    <div class="card">
+    <div class="card topic-card">
+
       <h3><%= topic.title %></h3>
 
+      <!-- Recent Messages -->
       <h4>Recent Messages:</h4>
-      <% if (topicMessages[topic._id].length === 0) { %>
+      <% if (topicMessages[topic._id].recent.length === 0) { %>
         <p>No messages yet.</p>
       <% } else { %>
-        <% topicMessages[topic._id].forEach(msg => { %>
-          <div class="card">
-            <strong><%= msg.author.username %>:</strong> 
+        <% topicMessages[topic._id].recent.forEach(msg => { %>
+          <div class="message">
+            <strong><%= msg.author.username %>:</strong>
             <p><%= msg.content %></p>
           </div>
         <% }) %>
       <% } %>
 
+      <!-- Full Chat History (scrollable) -->
+      <h4>Chat History:</h4>
+      <div class="chat-history">
+        <% topicMessages[topic._id].all.forEach(msg => { %>
+          <div class="chat-message">
+            <strong><%= msg.author.username %>:</strong>
+            <span><%= msg.content %></span>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Unsubscribe -->
       <form action="/topics/<%= topic._id %>/unsubscribe" method="POST">
-        <button type="submit">Unsubscribe</button>
+        <button type="submit" class="danger">Unsubscribe</button>
       </form>
 
-      <form action="/topics/<%= topic._id %>/messages" method="POST">
+      <!-- Post Message -->
+      <form action="/topics/<%= topic._id %>/messages" method="POST" class="message-form">
         <input type="text" name="content" placeholder="Write a message..." required>
-        <button type="submit">Post</button>
+        <button type="submit" class="primary">Post</button>
       </form>
+
     </div>
   <% }) %>
-  
+
   <a href="/topics">View all topics</a>
 
 </div>

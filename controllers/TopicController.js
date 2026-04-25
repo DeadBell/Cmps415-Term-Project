@@ -6,7 +6,9 @@ const topicNotifier = require("../observers/TopicStatsObserver");
 module.exports = {
   async dashboard(req, res) {
     try {
-      const user = await User.findById(req.session.userId).populate("subscribedTopics");
+      const user = await User.findById(req.session.userId).populate(
+        "subscribedTopics"
+      );
 
       if (!user) {
         return res.redirect("/login");
@@ -16,13 +18,23 @@ module.exports = {
       const topicMessages = {};
 
       for (const topic of topics) {
+        // Observer pattern (T6 + T8)
         topicNotifier.update("TOPIC_VIEWED", { topicId: topic._id });
 
-        const messages = await Message.find({ topic: topic._id })
+        // Last 2 messages (T2.1 requirement)
+        const recentMessages = await Message.find({ topic: topic._id })
           .sort({ createdAt: -1 })
           .limit(2);
 
-        topicMessages[topic._id] = messages;
+        // Full chat history (your enhancement)
+        const allMessages = await Message.find({ topic: topic._id }).sort({
+          createdAt: 1,
+        }); // oldest → newest
+
+        topicMessages[topic._id] = {
+          recent: recentMessages,
+          all: allMessages,
+        };
       }
 
       res.render("dashboard", { user, topics, topicMessages });
@@ -49,11 +61,11 @@ module.exports = {
       const topic = await Topic.create({
         title: req.body.title,
         createdBy: userId,
-        accessCount: 0
+        accessCount: 0,
       });
 
       await User.findByIdAndUpdate(userId, {
-        $addToSet: { subscribedTopics: topic._id }
+        $addToSet: { subscribedTopics: topic._id },
       });
 
       res.redirect("/dashboard");
@@ -66,7 +78,7 @@ module.exports = {
   async subscribe(req, res) {
     try {
       await User.findByIdAndUpdate(req.session.userId, {
-        $addToSet: { subscribedTopics: req.params.id }
+        $addToSet: { subscribedTopics: req.params.id },
       });
 
       res.redirect("/dashboard");
@@ -79,7 +91,7 @@ module.exports = {
   async unsubscribe(req, res) {
     try {
       await User.findByIdAndUpdate(req.session.userId, {
-        $pull: { subscribedTopics: req.params.id }
+        $pull: { subscribedTopics: req.params.id },
       });
 
       res.redirect("/dashboard");
@@ -92,7 +104,7 @@ module.exports = {
   async topicStats(req, res) {
     try {
       const topics = await Topic.find({}, "title accessCount").sort({
-        accessCount: -1
+        accessCount: -1,
       });
 
       res.render("stats", { topics });
@@ -100,6 +112,5 @@ module.exports = {
       console.log(err);
       res.redirect("/dashboard");
     }
-  }
+  },
 };
-
