@@ -102,15 +102,27 @@ module.exports = {
   },
 
   async topicStats(req, res) {
-    try {
-      const topics = await Topic.find({}, "title accessCount").sort({
-        accessCount: -1,
-      });
+  try {
+    const topics = await Topic.find({}, "title accessCount").sort({
+      accessCount: -1
+    });
 
-      res.render("stats", { topics });
-    } catch (err) {
-      console.log(err);
-      res.redirect("/dashboard");
+    const totalTopics = await Topic.countDocuments();
+    const totalPosts = await Message.countDocuments();
+    const totalSubscriptions = await User.aggregate([
+      { $project: { count: { $size: "$subscribedTopics" } } },
+      { $group: { _id: null, total: { $sum: "$count" } } }
+    ]);
+
+    res.render("stats", {
+      topics,
+      totalTopics,
+      totalPosts,
+      totalSubscriptions: totalSubscriptions[0]?.total || 0
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/dashboard");
     }
   },
 };
