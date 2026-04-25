@@ -103,11 +103,25 @@ module.exports = {
 
   async topicStats(req, res) {
   try {
-    const topics = await Topic.find({}, "title accessCount").sort({
-      accessCount: -1
-    });
+    const topics = await Topic.find().lean();
 
-    const totalTopics = await Topic.countDocuments();
+    // Compute postCount + subscriberCount for each topic
+    const enrichedTopics = await Promise.all(
+      topics.map(async (topic) => {
+        const postCount = await Message.countDocuments({ topic: topic._id });
+        const subscriberCount = await User.countDocuments({
+          subscribedTopics: topic._id
+        });
+
+        return {
+          ...topic,
+          postCount,
+          subscriberCount
+        };
+      })
+    );
+
+    const totalTopics = topics.length;
     const totalPosts = await Message.countDocuments();
     const totalSubscriptions = await User.aggregate([
       { $project: { count: { $size: "$subscribedTopics" } } },
@@ -115,13 +129,14 @@ module.exports = {
     ]);
 
     res.render("stats", {
-      topics,
+      topics: enrichedTopics,
       totalTopics,
       totalPosts,
       totalSubscriptions: totalSubscriptions[0]?.total || 0
     });
+
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.redirect("/dashboard");
     }
   },
